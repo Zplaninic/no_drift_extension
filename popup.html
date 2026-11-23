@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>No Drift</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0f1115;
+        --panel: #181b22;
+        --border: #2a2f3a;
+        --text: #e6e8ec;
+        --muted: #9aa1ad;
+        --accent: #7c9cff;
+        --danger: #ff7b7b;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        width: 340px;
+        padding: 14px;
+        background: var(--bg);
+        color: var(--text);
+        font: 13px/1.4 system-ui, sans-serif;
+      }
+      h1 {
+        font-size: 14px;
+        margin: 0 0 12px;
+        font-weight: 600;
+      }
+      h2 {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--muted);
+        margin: 16px 0 6px;
+        font-weight: 600;
+      }
+      input,
+      button {
+        font: inherit;
+        color: inherit;
+      }
+      input {
+        width: 100%;
+        padding: 8px 10px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        outline: none;
+      }
+      input:focus {
+        border-color: var(--accent);
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--panel);
+        border-radius: 8px;
+        padding: 6px 10px;
+      }
+      button:hover {
+        border-color: var(--muted);
+      }
+      .row {
+        display: flex;
+        gap: 6px;
+      }
+      .row input {
+        flex: 1;
+        min-width: 0;
+      }
+      #current {
+        white-space: nowrap;
+        color: var(--muted);
+      }
+      #durations {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+        margin-top: 8px;
+      }
+      #durations button[aria-pressed='true'] {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
+      #until {
+        margin-top: 8px;
+      }
+      #submit {
+        width: 100%;
+        margin-top: 10px;
+        padding: 9px;
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #0f1115;
+        font-weight: 600;
+      }
+      #submit:hover {
+        filter: brightness(1.08);
+      }
+      #note {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 11px;
+      }
+      #error {
+        margin: 6px 0 0;
+        color: var(--danger);
+        min-height: 0;
+      }
+      #locks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        max-height: 220px;
+        overflow-y: auto;
+      }
+      #locks li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        margin-bottom: 6px;
+        cursor: pointer;
+      }
+      #locks li:hover {
+        border-color: var(--muted);
+      }
+      .domain {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .left {
+        text-align: right;
+        white-space: nowrap;
+      }
+      .time {
+        font-variant-numeric: tabular-nums;
+        font-weight: 600;
+      }
+      .at {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .domain {
+        flex: 1;
+        min-width: 0;
+      }
+      .actions {
+        display: flex;
+        gap: 6px;
+      }
+      .actions button {
+        padding: 4px 8px;
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .actions button.danger:not(:disabled) {
+        color: var(--danger);
+        border-color: var(--danger);
+      }
+      .actions button:disabled {
+        cursor: default;
+        opacity: 0.6;
+      }
+      #empty {
+        color: var(--muted);
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>No Drift</h1>
+
+    <form id="form" novalidate>
+      <div class="row">
+        <input id="domain" placeholder="example.com" autocomplete="off" spellcheck="false" autofocus />
+        <button type="button" id="current">Current tab</button>
+      </div>
+
+      <div id="durations">
+        <button type="button" data-min="30">30m</button>
+        <button type="button" data-min="60">1h</button>
+        <button type="button" data-min="120">2h</button>
+        <button type="button" data-min="240">4h</button>
+        <button type="button" data-min="480">8h</button>
+        <button type="button" data-min="1440">24h</button>
+        <button type="button" data-min="10080">7d</button>
+        <button type="button" data-min="custom">Until…</button>
+      </div>
+      <input id="until" type="datetime-local" hidden />
+
+      <button id="submit" type="submit">Lock</button>
+      <p id="note">Locks can't be shortened. Unlocking early takes a 10s wait.</p>
+      <p id="error" role="alert"></p>
+    </form>
+
+    <h2>Active locks</h2>
+    <ul id="locks"></ul>
+    <p id="empty" hidden>Nothing locked.</p>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
